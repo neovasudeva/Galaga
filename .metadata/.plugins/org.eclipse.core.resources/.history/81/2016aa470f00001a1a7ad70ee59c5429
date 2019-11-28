@@ -1,0 +1,359 @@
+/************************************************************************
+Lab 9 Nios Software
+
+Dong Kai Wang, Fall 2017
+Christine Chen, Fall 2013
+
+For use with ECE 385 Experiment 9
+University of Illinois ECE Department
+************************************************************************/
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+#include "aes.h"
+
+// Pointer to base address of AES module, make sure it matches Qsys
+volatile unsigned int * AES_PTR = (unsigned int *) 0x00000040;
+
+// Execution mode: 0 for testing, 1 for benchmarking
+int run_mode = 0;
+
+/** charToHex
+ *  Convert a single character to the 4-bit value it represents.
+ *
+ *  Input: a character c (e.g. 'A')
+ *  Output: converted 4-bit value (e.g. -1xA)
+ */
+char charToHex(char c)
+{
+	char hex = c;
+
+	if (hex >= '0' && hex <= '9')
+		hex -= '0';
+	else if (hex >= 'A' && hex <= 'F')
+	{
+		hex -= 'A';
+		hex += 10;
+	}
+	else if (hex >= 'a' && hex <= 'f')
+	{
+		hex -= 'a';
+		hex += 10;
+	}
+	return hex;
+}
+
+/** charsToHex
+ *  Convert two characters to byte value it represents.
+ *  Inputs must be 0-9, A-F, or a-f.
+ *
+ *  Input: two characters c1 and c2 (e.g. 'A' and '7')
+ *  Output: converted byte value (e.g. 0xA7)
+ */
+char charsToHex(char c1, char c2)
+{
+	char hex1 = charToHex(c1);
+	char hex2 = charToHex(c2);
+	return (hex1 << 4) + hex2;
+}
+
+/* subBytes
+ * idek
+ */
+void subBytes(unsigned char * matrix) {
+	int i;
+	for (i = 0; i < 16; i++) {
+		matrix[i] = aes_sbox[matrix[i]];
+	}
+}
+
+// shift rows
+void shiftRows(unsigned char * matrix) {
+	// temp array to flip stuff
+	unsigned char temp[3];
+
+	// shift row with index 1
+	temp[0] = matrix[1];
+	matrix[1] = matrix[5];
+	matrix[5] = matrix[9];
+	matrix[9] = matrix[13];
+	matrix[13] = temp[0];
+
+	// shift row with index 2
+	temp[0] = matrix[2];
+	temp[1] = matrix[6];
+	matrix[2] = matrix[10];
+	matrix[6] = matrix[14];
+	matrix[10] = temp[0];
+	matrix[14] = temp[1];
+
+	// shift row with index 3
+	temp[0] = matrix[3];
+	temp[1] = matrix[7];
+	temp[2] = matrix[11];
+	matrix[3] = matrix[15];
+	matrix[7] = temp[0];
+	matrix[11] = temp[1];
+	matrix[15] = temp[2];
+}
+
+// helpers for mixColumns
+unsigned char xtime(unsigned char x) {
+	unsigned msb = 0;
+	if ((x >> 7) & 1)
+		msb = 1;
+	x = x << 1;
+	if (msb)
+		x = x ^ 0x11b;
+
+	return x;
+}
+
+unsigned char mult_2(unsigned char matrix_word) {
+	return xtime(matrix_word);
+}
+
+unsigned char mult_3(unsigned char matrix_word) {
+	return xtime(matrix_word) ^ matrix_word;
+}
+
+void mixColumns(unsigned char * matrix) {
+	int i;
+	unsigned char temp[4];
+
+	for (i = 0; i < 4; i++) {
+		temp[0] = matrix[4*i];
+		temp[1] = matrix[4*i + 1];
+		temp[2] = matrix[4*i + 2];
+		temp[3] = matrix[4*i + 3];
+
+		matrix[4*i] = mult_2(temp[0]) ^ mult_3(temp[1]) ^ temp[2] ^ temp[3];
+		matrix[4*i + 1] = temp[0] ^ mult_2(temp[1]) ^ mult_3(temp[2]) ^ temp[3];
+		matrix[4*i + 2] = temp[0] ^ temp[1] ^ mult_2(temp[2]) ^ mult_3(temp[3]);
+		matrix[4*i + 3] = mult_3(temp[0]) ^ temp[1] ^ temp[2] ^ mult_2(temp[3]);
+	}
+}
+
+void addRoundKey(unsigned char * matrix, unsigned int * keySchedule, unsigned int roundNum) {
+	for (unsigned int i = 0; i < 4; i++) {
+		matrix[i*4] = ((keySchedule[i + roundNum] >> 24) & 0xFF) ^ matrix[i*4];
+		matrix[i*4+1] = ((keySchedule[i + roundNum] >> 16) & 0xFF) ^ matrix[i*4+1];
+		matrix[i*4+2] = ((keySchedule[i + roundNum] >> 8) & 0xFF) ^ matrix[i*4+2];
+		matrix[i*4+3] = ((keySchedule[i + roundNum]) & 0xFF) ^ matrix[i*4+3];
+	}
+}
+
+unsigned int rotWord(unsigned int word) {
+	unsigned int digReader = 0xFF;
+
+	unsigned int b3 = ((digReader << 24) & word) >> 24;
+	unsigned int b2 = (digReader & word) << 8;
+	unsigned int b1 = ((digReader << 8) & word) << 8;
+	unsigned int b0 = ((digReader << 16) & word) << 8;
+
+
+	return b3 | b2 | b1 | b0;
+}
+
+unsigned int subWord(unsigned int word) {
+	unsigned int digReader = 0xFF;
+	unsigned int index = 0;
+	unsigned int output = 0;
+	for (unsigned int i = 0; i < 4; i++){
+		index = ((digReader << (i*8)) & word) >> (i*8);
+		output = output | (aes_sbox[index] << (i*8));
+	}
+
+	return output;
+}
+
+
+void keyExpansion(unsigned char * key, unsigned int * keySchedule) {
+	unsigned temp = 0;
+	int i;
+	// create key schedule for first round = cipher key
+	for (i = 0; i < 4; i++) {
+		keySchedule[i] = (key[i*4] << 24) | (key[i*4+1] << 16) | (key[i*4+2] << 8) | (key[i*4+3]);
+	}
+
+	// keys for other rounds
+	for (i = 4; i < 44; i++) {
+		temp = keySchedule[i-1];
+		if (i % 4 == 0)
+			temp = subWord(rotWord(temp)) ^ Rcon[i/4];
+
+		keySchedule[i] = keySchedule[i-4] ^ temp;
+	}
+}
+
+/** encrypt
+ *  Perform AES encryption in software.
+ *
+ *  Input: msg_ascii - Pointer to 32x 8-bit char array that contains the input message in ASCII format
+ *         key_ascii - Pointer to 32x 8-bit char array that contains the input key in ASCII format
+ *  Output:  msg_enc - Pointer to 4x 32-bit int array that contains the encrypted message
+ *               key - Pointer to 4x 32-bit int array that contains the input key
+ */
+void encrypt(unsigned char * msg_ascii, unsigned char * key_ascii, unsigned int * msg_enc, unsigned int * key)
+{
+	// temps for storing state and keys' hex values
+	unsigned char matrix[16];
+	unsigned char convertKey[16];
+
+	// get user input
+	for (unsigned int i = 0; i < 16; i++) {
+		matrix[i] = charsToHex(msg_ascii[i*2], msg_ascii[i*2 + 1]);
+		convertKey[i] = charsToHex(key_ascii[i*2], key_ascii[i*2 + 1]);
+	}
+
+	// key schedule
+	unsigned int keySchedule[44];
+
+	// first round
+	keyExpansion(convertKey, keySchedule);
+	addRoundKey(matrix, keySchedule, 0);
+
+	// 9 rounds
+	for (unsigned int i = 0; i < 9 ; i++) {
+		subBytes(matrix);
+		shiftRows(matrix);
+		mixColumns(matrix);
+		addRoundKey(matrix, keySchedule, (i+1) * 4);
+	}
+
+	// last round
+	subBytes(matrix);
+	shiftRows(matrix);
+	addRoundKey(matrix, keySchedule, 40);
+
+	// throw to output
+	for (unsigned int i = 0; i < 4; i++) {
+		key[i] = (convertKey[i*4] << 24) | (convertKey[i*4+1] << 16) | (convertKey[i*4+2] << 8) | (convertKey[i*4+3]);
+		msg_enc[i] = (matrix[i*4] << 24) | (matrix[i*4+1] << 16) | (matrix[i*4+2] << 8) | (matrix[i*4+3]);
+	}
+}
+
+/** decrypt
+ *  Perform AES decryption in hardware.
+ *
+ *  Input:  msg_enc - Pointer to 4x 32-bit int array that contains the encrypted message
+ *              key - Pointer to 4x 32-bit int array that contains the input key
+ *  Output: msg_dec - Pointer to 4x 32-bit int array that contains the decrypted message
+ */
+void decrypt(unsigned int * msg_enc, unsigned int * msg_dec, unsigned int * key)
+{
+	// set key
+	AES_PTR[3] = key[3];
+	AES_PTR[2] = key[2];
+	AES_PTR[1] = key[1];
+	AES_PTR[0] = key[0];
+
+	// send encrypted message
+	AES_PTR[4] = msg_enc[3];
+	AES_PTR[5] = msg_enc[2];
+	AES_PTR[6] = msg_enc[1];
+	AES_PTR[7] = msg_enc[0];
+
+	// start
+	AES_PTR[14] = 0x01;
+
+	// wait until process finishes
+	while(AES_PTR[15] != 0x01){}
+
+	// store
+	msg_dec[3] = AES_PTR[11];
+	msg_dec[2] = AES_PTR[10];
+	msg_dec[1] = AES_PTR[9];
+	msg_dec[0] = AES_PTR[8];
+
+	printf("\n\n");
+	printf("stored key: \n");
+	printf("%x", AES_PTR[0]);
+	printf("%x", AES_PTR[1]);
+	printf("%x", AES_PTR[2]);
+	printf("%x\n\n", AES_PTR[3]);
+
+	printf("\n\n");
+	printf("dec-mes: \n");
+	printf("%x", AES_PTR[8]);
+	printf("%x", AES_PTR[9]);
+	printf("%x", AES_PTR[10]);
+	printf("%x\n\n", AES_PTR[11]);
+
+	printf("reg 12: %x\n\n", AES_PTR[12]);
+
+	// end
+	AES_PTR[14] = 0x00;
+}
+
+/** main
+ *  Allows the user to enter the message, key, and select execution mode
+ *
+ */
+int main()
+{
+	// Input Message and Key as 32x 8-bit ASCII Characters ([33] is for NULL terminator)
+	unsigned char msg_ascii[33];
+	unsigned char key_ascii[33];
+	// Key, Encrypted Message, and Decrypted Message in 4x 32-bit Format to facilitate Read/Write to Hardware
+	unsigned int key[4];
+	unsigned int msg_enc[4];
+	unsigned int msg_dec[4];
+
+	printf("Select execution mode: 0 for testing, 1 for benchmarking: ");
+	scanf("%d", &run_mode);
+
+	if (run_mode == 0) {
+		// Continuously Perform Encryption and Decryption
+		while (1) {
+			int i = 0;
+			printf("\nEnter Message:\n");
+			scanf("%s", msg_ascii);
+			printf("\n");
+			printf("\nEnter Key:\n");
+			scanf("%s", key_ascii);
+			printf("\n");
+			encrypt(msg_ascii, key_ascii, msg_enc, key);
+			printf("\nEncrpted message is: \n");
+			for(i = 0; i < 4; i++){
+				printf("%08x", msg_enc[i]);
+			}
+			printf("\n");
+			decrypt(msg_enc, msg_dec, key);
+			printf("\nDecrypted message is: \n");
+			for(i = 0; i < 4; i++){
+				printf("%08x", msg_dec[i]);
+			}
+			printf("\n");
+
+		}
+	}
+	else {
+		// Run the Benchmark
+		int i = 0;
+		int size_KB = 2;
+		// Choose a random Plaintext and Key
+		for (i = 0; i < 32; i++) {
+			msg_ascii[i] = 'a';
+			key_ascii[i] = 'b';
+		}
+		// Run Encryption
+		clock_t begin = clock();
+		for (i = 0; i < size_KB * 64; i++)
+			encrypt(msg_ascii, key_ascii, msg_enc, key);
+		clock_t end = clock();
+		double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+		double speed = size_KB / time_spent;
+		printf("Software Encryption Speed: %f KB/s \n", speed);
+		// Run Decryption
+		begin = clock();
+		for (i = 0; i < size_KB * 64; i++)
+			decrypt(msg_enc, msg_dec, key);
+		end = clock();
+		time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+		speed = size_KB / time_spent;
+		printf("Hardware Encryption Speed: %f KB/s \n", speed);
+	}
+	return 0;
+}
