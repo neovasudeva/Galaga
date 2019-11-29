@@ -1,4 +1,10 @@
 
+State Machine - |lab8|game_controller:gc|signal_controller:comb_3|state
+Name state.START state.GAMEOVER state.PLAY 
+state.START 0 0 0 
+state.PLAY 1 0 1 
+state.GAMEOVER 1 1 0 
+
 State Machine - |lab8|nios_system:nios_system|nios_system_sdram:sdram|m_next
 Name m_next.010000000 m_next.000010000 m_next.000001000 m_next.000000001 
 m_next.000000001 0 0 0 0 

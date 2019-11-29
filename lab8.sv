@@ -109,18 +109,9 @@ module lab8( input               CLOCK_50,
     
      // logic for VGA
 	 logic [9:0] X_draw_coord, Y_draw_coord;
+	 logic [23:0] color_data;
 	 
-	 logic is_user_ship;
-	 logic [23:0] user_ship_data;
-	 logic [9:0] x_pos, y_pos;
-	 
-	 logic is_enemy_ship;
-	 logic [23:0] enemy_ship_data;
-	 
-	 logic is_laser;
-	 logic [23:0] laser_data;
-	 
-    // TODO: Fill in the connections for the rest of the modules 
+    // Fill in the connections for the rest of the modules 
     VGA_controller vga_controller_instance( .Clk (CLOCK_50),        
                                             .Reset (Reset_h),      
 	                                         .VGA_HS (VGA_HS),     
@@ -129,24 +120,12 @@ module lab8( input               CLOCK_50,
 	                                         .VGA_BLANK_N (VGA_BLANK_N),
 	                                         .VGA_SYNC_N (VGA_SYNC_N),       
 	                                         .DrawX (X_draw_coord),      
-	                                         .DrawY (Y_draw_coord)
-	);    
-	 
-    // Which signal should be frame_clk?
-    user_ship ship(.Clk (Clk), .Reset(Reset_h), .frame_clk(VGA_VS), .DrawX(X_draw_coord), .DrawY(Y_draw_coord), .keycode(keycode), 
-							.is_user_ship (is_user_ship), .user_ship_data (user_ship_data), .x_pos (x_pos), .y_pos (y_pos));
-							
-	 enemy_ship eship (.Clk (Clk), .Reset(Reset_h), .frame_clk(VGA_VS), .DrawX(X_draw_coord), .DrawY(Y_draw_coord), .keycode(keycode), 
-							.is_enemy_ship (is_enemy_ship), .enemy_ship_data (enemy_ship_data));
-							
-	 laser lol (.Clk (Clk), .Reset (Reset_h), .frame_clk(VGA_VS), .DrawX(X_draw_coord), .DrawY(Y_draw_coord), .keycode(keycode), 
-							.x_pos (x_pos), .y_pos (y_pos),
-							.is_laser (is_laser), .laser_data (laser_data));
+	                                         .DrawY (Y_draw_coord));    
+	
+	 game_controller gc (.Clk (CLOCK_50), .Reset (Reset_h), .frame_clk (VGA_VS), .DrawX (X_draw_coord), .DrawY (Y_draw_coord), 
+								.keycode (keycode), .color_data (color_data));
     
-    color_mapper color_instance( .is_user_ship (is_user_ship), .user_ship_data (user_ship_data), 
-											.is_enemy_ship (is_enemy_ship), .enemy_ship_data (enemy_ship_data),
-											.is_laser (is_laser), .laser_data (laser_data),
-											.DrawX(X_draw_coord), .DrawY(Y_draw_coord), .VGA_R(VGA_R), .VGA_G(VGA_G), .VGA_B(VGA_B) );
+    color_mapper color_instance( .color_data (color_data), .VGA_R(VGA_R), .VGA_G(VGA_G), .VGA_B(VGA_B) );
     
     // Display keycode on hex display
     HexDriver hex_inst_0 (keycode[3:0], HEX0);

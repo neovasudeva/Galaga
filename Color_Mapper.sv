@@ -14,53 +14,14 @@
 //-------------------------------------------------------------------------
 
 // color_mapper: Decide which color to be output to VGA for each pixel.
-module  color_mapper ( input 			is_user_ship,
-							  input 			[23:0] user_ship_data,
-							  input 			is_enemy_ship,
-							  input 			[23:0] enemy_ship_data,
-							  input 			is_laser,
-							  input 			[23:0] laser_data,
-                       input        [9:0] DrawX, DrawY,       // Current pixel coordinates
+module  color_mapper ( input 		[23:0]	color_data,
                        output logic [7:0] VGA_R, VGA_G, VGA_B // VGA RGB output
                      );
-    
-	// VGA Colors
-	logic [7:0] Red, Green, Blue;
 		
 	// Output colors to VGA
-	assign VGA_R = Red;
-	assign VGA_G = Green;
-	assign VGA_B = Blue;
-	
-	// Assign color based on sprite font data
-	always_comb
-	begin
-		if (is_laser == 1'b1) begin 
-			// enemy ship
-			Red = laser_data[15:8];
-			Green = laser_data[23:16];
-			Blue = laser_data[7:0];
-	  end
-	  else if (is_user_ship == 1'b1) begin
-			// user ship
-			Red = user_ship_data[15:8];
-			Green = user_ship_data[23:16];
-			Blue = user_ship_data[7:0];
-	  end
-	  else if (is_enemy_ship == 1'b1) begin
-			// enemy ship
-			Red = enemy_ship_data[15:8];
-			Green = enemy_ship_data[23:16];
-			Blue = enemy_ship_data[7:0];
-	  end
-	  else 
-	  begin
-			// Black background 
-			Red = 8'h20; 
-			Green = 8'h00;
-			Blue = 8'h00;
-	  end
-	end 
+	assign VGA_R = color_data[23:16];
+	assign VGA_G = color_data[15:8];
+	assign VGA_B = color_data[7:0];
 
 endmodule
 

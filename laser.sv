@@ -78,11 +78,6 @@ module  laser ( input        Clk,                // 50 MHz clock
         // Update position and motion only at rising edge of frame clock
         if (frame_clk_rising_edge)
         begin
-            // Be careful when using comparators with "logic" datatype because compiler treats 
-            //   both sides of the operator as UNSIGNED numbers.
-            // e.g. laser_Y_Pos - Ball_Size <= laser_Y_Min 
-            // If laser_Y_Pos is 0, then laser_Y_Pos - Ball_Size will not be -4, but rather a large positive number.
-				
 				// handle edges -> if laser is in movement, check if it hits edges
 				if (space_pressed == 1'b1) begin
 					// edge has been hit, but key is still pressed
