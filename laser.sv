@@ -4,15 +4,17 @@
 
 
 
-module  laser ( input        Clk,                // 50 MHz clock
+module  user_laser ( input        Clk,           // 50 MHz clock
                              Reset,              // Active-high reset signal
                              frame_clk,          // The clock indicating a new frame (~60Hz)
                input [9:0]   DrawX, DrawY,       // Current pixel coordinates
 					input [7:0]	  keycode,				 // pass key pressed into laser.sv
-					input [9:0]	  x_pos,
-					input [9:0]   y_pos,
+					input [9:0]	  user_x_pos,
+					input [9:0]   user_y_pos,
 					output 		  is_laser,				 // whether current drawing pixel is the laser
-					output [23:0] laser_data		 // sends color of user ship
+					output [23:0] laser_data,		    // sends color of user ship
+					output [9:0]  user_laser_x_pos, 	 // location of laser
+					output [9:0]  user_laser_y_pos
               );
     
     parameter [9:0] laser_X_Center = 10'd320;  // Center position on the X axis
@@ -82,10 +84,10 @@ module  laser ( input        Clk,                // 50 MHz clock
 				if (space_pressed == 1'b1) begin
 					// edge has been hit, but key is still pressed
 					if (laser_Y_Pos >= laser_Y_Max && keycode == 8'h2C) begin
-						laser_X_Pos_in = x_pos + 10'd5;
-						laser_Y_Pos_in = y_pos - laser_Y_Size;
+						laser_X_Pos_in = user_x_pos + 10'd7;
+						laser_Y_Pos_in = user_y_pos - laser_Y_Size;
 						laser_Y_Motion_in = (~(laser_Y_Step) + 1'b1); 
-						old_X_Pos = x_pos + 10'd5;
+						old_X_Pos = user_x_pos + 10'd5;
 						space_pressed_in = 1'b1;
 					end
 					// edge has been hit
@@ -101,10 +103,10 @@ module  laser ( input        Clk,                // 50 MHz clock
 					end
 				end				
 				else begin
-					laser_X_Pos_in = x_pos + 10'd5;
-					laser_Y_Pos_in = y_pos - laser_Y_Size;
+					laser_X_Pos_in = user_x_pos + 10'd5;
+					laser_Y_Pos_in = user_y_pos - laser_Y_Size;
 					laser_Y_Motion_in = 10'd0; 
-					old_X_Pos = x_pos + 10'd5;
+					old_X_Pos = user_x_pos + 10'd5;
 					space_pressed_in = 1'b0;
 				end
 				

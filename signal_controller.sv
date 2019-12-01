@@ -6,7 +6,7 @@
 module signal_controller (input         Clk,         	// 50 MHz clock signal 
                                         Reset,         // Reset signal 
 								  input [7:0]	keycode,			// key pressed
-								  input 			hit, 				// ship has been hit
+								  input 			done, 			// ship has been hit or enemies have been eliminated
 								  output 		start, play, gameover	// states
 );
 
@@ -37,14 +37,14 @@ module signal_controller (input         Clk,         	// 50 MHz clock signal
 					next_state = START;
 			end
 			PLAY: begin
-				if (hit == 1'b1)
+				if (done == 1'b1)
 					next_state = GAMEOVER;
 				else
 					next_state = PLAY;
 			end
 			GAMEOVER: begin
 				if (keycode == 8'h28)
-					next_state = PLAY;
+					next_state = START;
 				else
 					next_state = GAMEOVER;
 			end

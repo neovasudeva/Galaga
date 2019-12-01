@@ -11,8 +11,8 @@ module  user_ship ( input         Clk,           // 50 MHz clock
 					input [7:0]	  keycode,				 // pass key pressed into user_ship.sv
 					output 		  is_user_ship,		 // whether current drawing pixel is the user_ship
 					output [23:0] user_ship_data,		 // sends color of user ship
-					output [9:0]  x_pos,
-					output [9:0]  y_pos
+					output [9:0]  user_x_pos,
+					output [9:0]  user_y_pos
               );
     
     parameter [9:0] User_Ship_X_Center = 10'd320;  // Center position on the X axis
@@ -28,8 +28,8 @@ module  user_ship ( input         Clk,           // 50 MHz clock
     logic [9:0] User_Ship_X_Motion, User_Ship_Y_Motion, User_Ship_X_Pos, User_Ship_Y_Pos;
     logic [9:0] User_Ship_X_Pos_in, User_Ship_X_Motion_in, User_Ship_Y_Pos_in, User_Ship_Y_Motion_in;
 	 
-	 assign x_pos = User_Ship_X_Pos;
-	 assign y_pos = User_Ship_Y_Pos;
+	 assign user_x_pos = User_Ship_X_Pos;
+	 assign user_y_pos = User_Ship_Y_Pos;
     
     //////// Do not modify the always_ff blocks. ////////
     // Detect rising edge of frame_clk

@@ -10,7 +10,9 @@ module  enemy_ship ( input         Clk,           // 50 MHz clock
                input [9:0]   DrawX, DrawY,       // Current pixel coordinates
 					input [7:0]	  keycode,				 // pass key pressed into enemy_ship.sv
 					output 		  is_enemy_ship,		 // whether current drawing pixel is the enemy_ship
-					output [23:0] enemy_ship_data		 // sends color of user ship
+					output [23:0] enemy_ship_data,	 // sends color of user ship
+					output [9:0]  enemy_x_pos, 		 // position of enemy
+					output [9:0]  enemy_y_pos
               );
     
     parameter [9:0] enemy_ship_X_Center = 10'd320;  // Center position on the X axis
@@ -25,6 +27,10 @@ module  enemy_ship ( input         Clk,           // 50 MHz clock
     
     logic [9:0] enemy_ship_X_Motion, enemy_ship_Y_Motion, enemy_ship_X_Pos, enemy_ship_Y_Pos;
     logic [9:0] enemy_ship_X_Pos_in, enemy_ship_X_Motion_in, enemy_ship_Y_Pos_in, enemy_ship_Y_Motion_in;
+	 
+	 // assign current position to outputs
+	 assign enemy_x_pos = enemy_ship_X_Pos;
+	 assign enemy_y_pos = enemy_ship_Y_Pos;
     
     //////// Do not modify the always_ff blocks. ////////
     // Detect rising edge of frame_clk
