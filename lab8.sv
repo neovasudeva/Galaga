@@ -110,6 +110,10 @@ module lab8( input               CLOCK_50,
      // logic for VGA
 	 logic [9:0] X_draw_coord, Y_draw_coord;
 	 logic [23:0] color_data;
+	 logic [4:0] score;
+	 logic [3:0] ones, tens;
+	 assign ones = (score % 10);
+	 assign tens = (score / 10) % 10;
 	 
     // Fill in the connections for the rest of the modules 
     VGA_controller vga_controller_instance( .Clk (CLOCK_50),        
@@ -123,11 +127,11 @@ module lab8( input               CLOCK_50,
 	                                         .DrawY (Y_draw_coord));    
 	
 	 game_controller gc (.Clk (CLOCK_50), .Reset (Reset_h), .frame_clk (VGA_VS), .DrawX (X_draw_coord), .DrawY (Y_draw_coord), 
-								.keycode (keycode), .color_data (color_data));
+								.keycode (keycode), .color_data (color_data), .score (score));
     
     color_mapper color_instance( .color_data (color_data), .VGA_R(VGA_R), .VGA_G(VGA_G), .VGA_B(VGA_B) );
     
     // Display keycode on hex display
-    HexDriver hex_inst_0 (keycode[3:0], HEX0);
-    HexDriver hex_inst_1 (keycode[7:4], HEX1);
+    HexDriver hex_inst_0 (ones, HEX0);
+    HexDriver hex_inst_1 (tens, HEX1);
 endmodule

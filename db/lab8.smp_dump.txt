@@ -1,5 +1,5 @@
 
-State Machine - |lab8|game_controller:gc|signal_controller:comb_3|state
+State Machine - |lab8|game_controller:gc|signal_controller:comb_9|state
 Name state.START state.GAMEOVER state.PLAY 
 state.START 0 0 0 
 state.PLAY 1 0 1 

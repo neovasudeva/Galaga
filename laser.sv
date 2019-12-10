@@ -15,6 +15,7 @@ module  user_laser ( input        Clk,           // 50 MHz clock
 					output [23:0] laser_data,		    // sends color of user ship
 					output [9:0]  user_laser_x_pos, 	 // location of laser
 					output [9:0]  user_laser_y_pos
+					//input 		  laser_hit				 // laser has hit enemy
               );
     
     parameter [9:0] laser_X_Center = 10'd320;  // Center position on the X axis
@@ -23,12 +24,14 @@ module  user_laser ( input        Clk,           // 50 MHz clock
     parameter [9:0] laser_X_Max = 10'd639;     // Rightmost point on the X axis
     parameter [9:0] laser_Y_Min = 10'd0;       // Topmost point on the Y axis
     parameter [9:0] laser_Y_Max = 10'd479;     // Bottommost point on the Y axis
-    parameter [9:0] laser_Y_Step = 10'd10;      // Step size on the Y axis
+    parameter [9:0] laser_Y_Step = 10'd4;      // Step size on the Y axis
     parameter [9:0] laser_X_Size = 10'd20;     // laser's size (20x49 )
 	 parameter [9:0] laser_Y_Size = 10'd49;
 	 
 	 // temp logic for storing old location of laser
 	 logic [9:0] old_X_Pos;
+	 assign user_laser_x_pos = laser_X_Pos;
+	 assign user_laser_y_pos = laser_Y_Pos;
 	 
 	 // temp logic for is_laser
 	 logic space_pressed;
@@ -58,8 +61,8 @@ module  user_laser ( input        Clk,           // 50 MHz clock
         end
         else
         begin
-            laser_X_Pos <= laser_X_Pos_in;
-            laser_Y_Pos <= laser_Y_Pos_in;
+            laser_X_Pos <= laser_X_Pos_in; 
+            laser_Y_Pos <= laser_Y_Pos_in; 
             laser_Y_Motion <= laser_Y_Motion_in;
 				space_pressed <= space_pressed_in;
         end
@@ -82,16 +85,16 @@ module  user_laser ( input        Clk,           // 50 MHz clock
         begin
 				// handle edges -> if laser is in movement, check if it hits edges
 				if (space_pressed == 1'b1) begin
-					// edge has been hit, but key is still pressed
+					// edge has been hit or enemy has been hit, but key is still pressed
 					if (laser_Y_Pos >= laser_Y_Max && keycode == 8'h2C) begin
-						laser_X_Pos_in = user_x_pos + 10'd7;
+						laser_X_Pos_in = user_x_pos + 10'd8;
 						laser_Y_Pos_in = user_y_pos - laser_Y_Size;
 						laser_Y_Motion_in = (~(laser_Y_Step) + 1'b1); 
 						old_X_Pos = user_x_pos + 10'd5;
 						space_pressed_in = 1'b1;
 					end
-					// edge has been hit
-					else if (laser_Y_Pos >= laser_Y_Max /*|| laser_Y_Pos + laser_Y_Size <= laser_Y_Min*/) begin 
+					// edge has been hit or has hit enemy
+					else if (laser_Y_Pos >= laser_Y_Max) begin 
 						space_pressed_in = 1'b0;
 					end 
 					// edge hasn't been hit

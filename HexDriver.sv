@@ -1,6 +1,5 @@
 module HexDriver (input  [3:0]  In0,
                   output logic [6:0]  Out0);
-	
 	always_comb
 	begin
 		unique case (In0)

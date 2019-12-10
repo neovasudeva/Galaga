@@ -1,0 +1,45 @@
+// eship_row.sv
+//
+// used to represent a row of enemy ships 
+
+module eship_row (input         Clk,         	// 50 MHz clock signal   
+											Reset,         // Reset signal 
+											frame_clk,     // ~60 MHz clock signal
+						 input [9:0]   DrawX, DrawY,  // Current drawing coordinates
+						 output is_enemy_ship1,
+                   output [23:0] enemy_ship_data1,
+                   output is_enemy_ship2,
+                   output [23:0] enemy_ship_data2,
+                   output is_enemy_ship3,
+                   output [23:0] enemy_ship_data3,
+                   output is_enemy_ship4,
+                   output [23:0] enemy_ship_data4,
+                   output is_enemy_ship5,
+                   output [23:0] enemy_ship_data5,
+                   output is_enemy_ship6,
+                   output [23:0] enemy_ship_data6);
+
+	// enemy ships	
+	 enemy_ship eship11 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
+							.is_enemy_ship (is_enemy_ship11), .enemy_ship_data (enemy_ship_data11), 
+							.enemy_x_pos (10'd0), .enemy_y_pos(10'd0));
+							
+	 enemy_ship eship12 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
+							.is_enemy_ship (is_enemy_ship12), .enemy_ship_data (enemy_ship_data12),
+							.enemy_x_pos (10'd40), .enemy_y_pos(10'd0));
+							
+	 enemy_ship eship13 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
+							.is_enemy_ship (is_enemy_ship13), .enemy_ship_data (enemy_ship_data13),
+							.enemy_x_pos (10'd80), .enemy_y_pos(10'd0));
+							
+	 enemy_ship eship14 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
+							.is_enemy_ship (is_enemy_ship14), .enemy_ship_data (enemy_ship_data14),
+							.enemy_x_pos (10'd120), .enemy_y_pos(10'd0));
+							
+	 enemy_ship eship15 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
+							.is_enemy_ship (is_enemy_ship15), .enemy_ship_data (enemy_ship_data15),
+							.enemy_x_pos (10'd160), .enemy_y_pos(10'd0));
+							
+	 enemy_ship eship16 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
+							.is_enemy_ship (is_enemy_ship16), .enemy_ship_data (enemy_ship_data16),
+							.enemy_x_pos (10'd200), .enemy_y_pos(10'd0));

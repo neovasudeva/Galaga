@@ -21,7 +21,7 @@ module  user_ship ( input         Clk,           // 50 MHz clock
     parameter [9:0] User_Ship_X_Max = 10'd639;     // Rightmost point on the X axis
     parameter [9:0] User_Ship_Y_Min = 10'd0;       // Topmost point on the Y axis
     parameter [9:0] User_Ship_Y_Max = 10'd479;     // Bottommost point on the Y axis
-    parameter [9:0] User_Ship_X_Step = 10'd1;      // Step size on the X axis
+    parameter [9:0] User_Ship_X_Step = 10'd2;      // Step size on the X axis
     parameter [9:0] User_Ship_Y_Step = 10'd1;      // Step size on the Y axis
     parameter [9:0] User_Ship_Size = 10'd40;       // User_Ship's size (40x40)
     
@@ -86,17 +86,17 @@ module  user_ship ( input         Clk,           // 50 MHz clock
 						User_Ship_X_Motion_in = User_Ship_X_Step;
 					end
 					default: begin			// maintain current heading if no keys are pressed
-						User_Ship_X_Motion_in = User_Ship_X_Motion;
-						User_Ship_Y_Motion_in = User_Ship_Y_Motion;
+						User_Ship_X_Motion_in = 10'd0;
+						User_Ship_Y_Motion_in = 10'd0;
 					end
 				endcase
 					
 				// handle edges -> left and right edges
 				if (User_Ship_X_Pos + User_Ship_Size >= User_Ship_X_Max) begin // Ball is at right edge, BOUNCE!
-					 User_Ship_X_Motion_in = (~(User_Ship_Y_Step) + 1'b1);
+					 User_Ship_X_Motion_in = (~(User_Ship_X_Step) + 1'b1);
 					 User_Ship_Y_Motion_in = 10'd0;
 				end
-				else if (User_Ship_X_Pos <= User_Ship_X_Min + User_Ship_Size)	begin // Ball is at left edge, BOUNCE!
+				else if (User_Ship_X_Pos <= User_Ship_X_Min)	begin // Ball is at left edge, BOUNCE!
 					 User_Ship_X_Motion_in = User_Ship_X_Step;
 					 User_Ship_Y_Motion_in = 10'd0;
 				end
