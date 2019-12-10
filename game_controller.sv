@@ -15,11 +15,14 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 );
 
 	 // SIGNAL CONTROLLER LOGIC
-	 logic start, play, gameover;
-	 logic done;
+	 logic start, play, gameover, win;
+	 logic done, killed_all, died;
+	 assign killed_all = (score == 5'h12);
+	 assign died = (gameover1 || gameover2 || gameover3);
 	 assign done = (gameover1 || gameover2 || gameover3) || (score == 5'h12);
 	 signal_controller(.Clk (Clk), .Reset (Reset), .keycode (keycode), 
-								.done (done), .start (start), .play (play), .gameover (gameover));
+								.died (died), .killed_all (killed_all), 
+								.start (start), .play (play), .gameover (gameover), .win (win) );
 	 
 	 // user ship and laser
 	 logic is_user_ship;
@@ -122,13 +125,13 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 					.is_enemy_ship6 (is_enemy_ship36), .enemy_ship_data6 (enemy_ship_data36),
 					.score_row (score3), .laser_hit_row (laser_hit_row3));
 	
-		
 		/*
+		
 	 enemy_ship eship (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
 							.is_enemy_ship (is_enemy_ship11), .enemy_ship_data (enemy_ship_data11), 
-							.enemy_x_pos (10'd50), .enemy_y_pos(10'd0), .gameover (done),
-							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos));
-							//.laser_hit (laser_hit));
+							.enemy_x_pos (10'd50), .enemy_y_pos(10'd0), .play (play), .gameover (done),
+							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
+							.count (), .laser_hit (laser_hit), .done ());
 		*/
 					
 	 // laser
@@ -136,15 +139,17 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 							.user_x_pos (user_x_pos), .user_y_pos (user_y_pos),
 							.is_laser (is_laser), .laser_data (laser_data),
 							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
-							.laser_hit (laser_hit));
+							.play (play), .laser_hit (laser_hit));
 									
 	 // logo controllers
 	 logic is_galaga;
 	 logic is_pressed_start;
 	 logic is_gameover;
+	 logic is_you_win;
 	 galaga_logo gl (.DrawX (DrawX), .DrawY (DrawY), .is_galaga (is_galaga));	
 	 press_start_logo psl (.DrawX (DrawX), .DrawY (DrawY), .is_press_start (is_press_start));
 	 gameover_logo go (.DrawX (DrawX), .DrawY (DrawY), .is_gameover (is_gameover));
+	 you_win_logo yw (.DrawX (DrawX), .DrawY (DrawY), .is_you_win (is_you_win));
 							
 							
 	 // COLOR ASSIGNMENT -> assigns color to color_data to display on monitor
@@ -171,13 +176,6 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 				Red = user_ship_data[15:8];
 				Green = user_ship_data[23:16];
 				Blue = user_ship_data[7:0];
-			end
-			// laser
-			else if (is_laser == 1'b1) begin 
-				// enemy ship
-				Red = laser_data[15:8];
-				Green = laser_data[23:16];
-				Blue = laser_data[7:0];
 			end
 			// background
 			else begin
@@ -344,6 +342,27 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 				Green = 8'h00;
 				Blue = 8'h00;
 			end
+		end
+		
+		// win
+		else if (win == 1'b1) begin
+			// you win logo
+			if (is_you_win == 1'b1) begin
+				Red = 8'hFF;
+				Green = 8'hFF;
+				Blue = 8'hFF;
+			end
+			// press start logo
+			else if (is_press_start == 1'b1) begin
+				Red = 8'hFF;
+				Green = 8'hFF;
+				Blue = 8'hFF;
+			end
+			else begin
+				Red = 8'h20;
+				Green = 8'h00;
+				Blue = 8'h00;
+			end 
 		end
 		
 		// default -> white screen

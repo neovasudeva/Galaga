@@ -8,7 +8,6 @@ module  enemy_ship ( input         Clk,           // 50 MHz clock
                              Reset,              // Active-high reset signal
                              frame_clk,          // The clock indicating a new frame (~60Hz)
                input [9:0]   DrawX, DrawY,       // Current pixel coordinates
-					input [7:0]	  keycode,				 // pass key pressed into enemy_ship.sv
 					output 		  is_enemy_ship,		 // whether current drawing pixel is the enemy_ship
 					output [23:0] enemy_ship_data,	 // sends color of user ship
 					input [9:0]  enemy_x_pos, 		    // position of enemy
