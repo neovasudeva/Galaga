@@ -9314,26 +9314,30 @@ address => readdata[18].DATAIN
 address => readdata[17].DATAIN
 address => readdata[16].DATAIN
 address => readdata[14].DATAIN
-address => readdata[12].DATAIN
+address => readdata[13].DATAIN
 address => readdata[11].DATAIN
-address => readdata[8].DATAIN
+address => readdata[9].DATAIN
 address => readdata[7].DATAIN
+address => readdata[6].DATAIN
+address => readdata[4].DATAIN
+address => readdata[3].DATAIN
+address => readdata[0].DATAIN
 clock => ~NO_FANOUT~
 reset_n => ~NO_FANOUT~
-readdata[0] <= <GND>
+readdata[0] <= address.DB_MAX_OUTPUT_PORT_TYPE
 readdata[1] <= <GND>
 readdata[2] <= <GND>
-readdata[3] <= <GND>
-readdata[4] <= <GND>
+readdata[3] <= address.DB_MAX_OUTPUT_PORT_TYPE
+readdata[4] <= address.DB_MAX_OUTPUT_PORT_TYPE
 readdata[5] <= <GND>
-readdata[6] <= <GND>
+readdata[6] <= address.DB_MAX_OUTPUT_PORT_TYPE
 readdata[7] <= address.DB_MAX_OUTPUT_PORT_TYPE
-readdata[8] <= address.DB_MAX_OUTPUT_PORT_TYPE
-readdata[9] <= <GND>
+readdata[8] <= <GND>
+readdata[9] <= address.DB_MAX_OUTPUT_PORT_TYPE
 readdata[10] <= <GND>
 readdata[11] <= address.DB_MAX_OUTPUT_PORT_TYPE
-readdata[12] <= address.DB_MAX_OUTPUT_PORT_TYPE
-readdata[13] <= <GND>
+readdata[12] <= <GND>
+readdata[13] <= address.DB_MAX_OUTPUT_PORT_TYPE
 readdata[14] <= address.DB_MAX_OUTPUT_PORT_TYPE
 readdata[15] <= <GND>
 readdata[16] <= address.DB_MAX_OUTPUT_PORT_TYPE
@@ -68846,6 +68850,7 @@ score_row[1] <= Add4.DB_MAX_OUTPUT_PORT_TYPE
 score_row[2] <= Add4.DB_MAX_OUTPUT_PORT_TYPE
 score_row[3] <= Add4.DB_MAX_OUTPUT_PORT_TYPE
 score_row[4] <= Add4.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit_row <= laser_hit_row.DB_MAX_OUTPUT_PORT_TYPE
 
 
 |lab8|game_controller:gc|eship_row:row1|enemy_ship:eship1
@@ -69073,6 +69078,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -69204,6 +69210,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -69513,6 +69520,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -69644,6 +69652,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -69953,6 +69962,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -70084,6 +70094,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -70393,6 +70404,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -70524,6 +70536,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -70833,6 +70846,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -70964,6 +70978,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -71273,6 +71288,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -71404,6 +71420,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -71700,6 +71717,7 @@ score_row[1] <= Add4.DB_MAX_OUTPUT_PORT_TYPE
 score_row[2] <= Add4.DB_MAX_OUTPUT_PORT_TYPE
 score_row[3] <= Add4.DB_MAX_OUTPUT_PORT_TYPE
 score_row[4] <= Add4.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit_row <= laser_hit_row.DB_MAX_OUTPUT_PORT_TYPE
 
 
 |lab8|game_controller:gc|eship_row:row2|enemy_ship:eship1
@@ -71927,6 +71945,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -72058,6 +72077,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -72367,6 +72387,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -72498,6 +72519,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -72807,6 +72829,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -72938,6 +72961,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -73247,6 +73271,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -73378,6 +73403,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -73687,6 +73713,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -73818,6 +73845,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -74127,6 +74155,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -74258,6 +74287,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -74554,6 +74584,7 @@ score_row[1] <= Add4.DB_MAX_OUTPUT_PORT_TYPE
 score_row[2] <= Add4.DB_MAX_OUTPUT_PORT_TYPE
 score_row[3] <= Add4.DB_MAX_OUTPUT_PORT_TYPE
 score_row[4] <= Add4.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit_row <= laser_hit_row.DB_MAX_OUTPUT_PORT_TYPE
 
 
 |lab8|game_controller:gc|eship_row:row3|enemy_ship:eship1
@@ -74781,6 +74812,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -74912,6 +74944,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -75221,6 +75254,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -75352,6 +75386,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -75661,6 +75696,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -75792,6 +75828,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -76101,6 +76138,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -76232,6 +76270,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -76541,6 +76580,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -76672,6 +76712,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -76981,6 +77022,7 @@ count[1] <= <GND>
 count[2] <= <GND>
 count[3] <= <GND>
 count[4] <= <GND>
+laser_hit <= hit_controller:hitter.laser_hit
 done => done.IN1
 
 
@@ -77112,6 +77154,7 @@ user_laser_y_pos[9] => LessThan4.IN11
 user_laser_y_pos[9] => LessThan5.IN11
 user_laser_y_pos[9] => Add2.IN11
 enemy_hit <= enemy_hit~reg0.DB_MAX_OUTPUT_PORT_TYPE
+laser_hit <= always1.DB_MAX_OUTPUT_PORT_TYPE
 done => enemy_hit.OUTPUTSELECT
 
 
@@ -77319,16 +77362,17 @@ user_x_pos[8] => Add0.IN9
 user_x_pos[8] => Add2.IN12
 user_x_pos[9] => Add0.IN8
 user_x_pos[9] => Add2.IN11
-user_y_pos[0] => Add3.IN20
-user_y_pos[1] => Add3.IN19
-user_y_pos[2] => Add3.IN18
-user_y_pos[3] => Add3.IN17
-user_y_pos[4] => Add3.IN16
-user_y_pos[5] => Add3.IN15
-user_y_pos[6] => Add3.IN14
-user_y_pos[7] => Add3.IN13
-user_y_pos[8] => Add3.IN12
-user_y_pos[9] => Add3.IN11
+user_y_pos[0] => laser_Y_Pos_in.DATAB
+user_y_pos[0] => laser_Y_Pos_in.DATAA
+user_y_pos[1] => Add3.IN18
+user_y_pos[2] => Add3.IN17
+user_y_pos[3] => Add3.IN16
+user_y_pos[4] => Add3.IN15
+user_y_pos[5] => Add3.IN14
+user_y_pos[6] => Add3.IN13
+user_y_pos[7] => Add3.IN12
+user_y_pos[8] => Add3.IN11
+user_y_pos[9] => Add3.IN10
 is_laser <= is_laser.DB_MAX_OUTPUT_PORT_TYPE
 laser_data[0] <= laserRAM:lr.data_out
 laser_data[1] <= laserRAM:lr.data_out
@@ -77374,6 +77418,7 @@ user_laser_y_pos[6] <= laser_Y_Pos[6].DB_MAX_OUTPUT_PORT_TYPE
 user_laser_y_pos[7] <= laser_Y_Pos[7].DB_MAX_OUTPUT_PORT_TYPE
 user_laser_y_pos[8] <= laser_Y_Pos[8].DB_MAX_OUTPUT_PORT_TYPE
 user_laser_y_pos[9] <= laser_Y_Pos[9].DB_MAX_OUTPUT_PORT_TYPE
+laser_hit => always2.IN1
 
 
 |lab8|game_controller:gc|user_laser:ulaser|laserRAM:lr

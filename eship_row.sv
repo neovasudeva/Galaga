@@ -24,7 +24,8 @@ module eship_row (input         Clk,         	// 50 MHz clock signal
                    output [23:0] enemy_ship_data5,
                    output is_enemy_ship6,
                    output [23:0] enemy_ship_data6,
-						 output [4:0] score_row);
+						 output [4:0] score_row,
+						 output 			laser_hit_row);
 
 	// gameover logic 
 	logic gameover1, gameover2, gameover3, gameover4, gameover5, gameover6;
@@ -32,44 +33,45 @@ module eship_row (input         Clk,         	// 50 MHz clock signal
 	
 	// bounce logic
 	logic [4:0] count1, count2, count3, count4, count5, count6;
+	logic laser_hit1, laser_hit2, laser_hit3, laser_hit4, laser_hit5, laser_hit6;
 	assign score_row = count1 + count2 + count3 + count4 + count5 + count6;
+	assign laser_hit_row = laser_hit1 || laser_hit2 || laser_hit3 || laser_hit4 || laser_hit5 || laser_hit6;
 	
 	// enemy ships	
 	enemy_ship eship1 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
 							.is_enemy_ship (is_enemy_ship1), .enemy_ship_data (enemy_ship_data1), 
 							.enemy_x_pos (10'd50), .enemy_y_pos(y_offset), .play (play), .gameover (gameover1),
 							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
-							.count (count1), .done (done));
-							
+							.count (count1), .laser_hit (laser_hit1), .done (done));	
 							
 	enemy_ship eship2 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
 							.is_enemy_ship (is_enemy_ship2), .enemy_ship_data (enemy_ship_data2),
 							.enemy_x_pos (10'd100), .enemy_y_pos(y_offset), .play (play), .gameover (gameover2),
 							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
-							.count (count2), .done (done));
+							.count (count2), .laser_hit (laser_hit2), .done (done));
 							
 	enemy_ship eship3 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
 							.is_enemy_ship (is_enemy_ship3), .enemy_ship_data (enemy_ship_data3),
 							.enemy_x_pos (10'd150), .enemy_y_pos(y_offset), .play (play), .gameover (gameover3),
 							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
-							.count (count3), .done (done));
+							.count (count3), .laser_hit (laser_hit3), .done (done));
 							
 	enemy_ship eship4 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
 							.is_enemy_ship (is_enemy_ship4), .enemy_ship_data (enemy_ship_data4),
 							.enemy_x_pos (10'd200), .enemy_y_pos(y_offset), .play (play), .gameover (gameover4),
 							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos), 
-							.count (count4), .done (done));
+							.count (count4), .laser_hit (laser_hit4), .done (done));
 							
 	enemy_ship eship5 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
 							.is_enemy_ship (is_enemy_ship5), .enemy_ship_data (enemy_ship_data5),
 							.enemy_x_pos (10'd250), .enemy_y_pos(y_offset), .play (play), .gameover (gameover5),
 							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
-							.count (count5), .done (done));
+							.count (count5), .laser_hit (laser_hit5), .done (done));
 							
 	enemy_ship eship6 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), 
 							.is_enemy_ship (is_enemy_ship6), .enemy_ship_data (enemy_ship_data6),
 							.enemy_x_pos (10'd300), .enemy_y_pos(y_offset), .play (play), .gameover (gameover6),
 							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
-							.count (count6), .done (done));
+							.count (count6), .laser_hit (laser_hit6), .done (done));
 
 endmodule 

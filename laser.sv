@@ -14,8 +14,8 @@ module  user_laser ( input        Clk,           // 50 MHz clock
 					output 		  is_laser,				 // whether current drawing pixel is the laser
 					output [23:0] laser_data,		    // sends color of user ship
 					output [9:0]  user_laser_x_pos, 	 // location of laser
-					output [9:0]  user_laser_y_pos
-					//input 		  laser_hit				 // laser has hit enemy
+					output [9:0]  user_laser_y_pos,
+					input 		  laser_hit				 // laser has hit enemy
               );
     
     parameter [9:0] laser_X_Center = 10'd320;  // Center position on the X axis
@@ -85,16 +85,16 @@ module  user_laser ( input        Clk,           // 50 MHz clock
         begin
 				// handle edges -> if laser is in movement, check if it hits edges
 				if (space_pressed == 1'b1) begin
-					// edge has been hit or enemy has been hit, but key is still pressed
-					if (laser_Y_Pos >= laser_Y_Max && keycode == 8'h2C) begin
+					// edge has been hit but key is still pressed
+					if ((laser_Y_Pos >= laser_Y_Max || laser_hit == 1'b1) && keycode == 8'h2C) begin
 						laser_X_Pos_in = user_x_pos + 10'd8;
-						laser_Y_Pos_in = user_y_pos - laser_Y_Size;
+						laser_Y_Pos_in = user_y_pos + 10'd2;
 						laser_Y_Motion_in = (~(laser_Y_Step) + 1'b1); 
 						old_X_Pos = user_x_pos + 10'd5;
 						space_pressed_in = 1'b1;
 					end
-					// edge has been hit or has hit enemy
-					else if (laser_Y_Pos >= laser_Y_Max) begin 
+					// edge has been hit
+					else if (laser_Y_Pos >= laser_Y_Max || laser_hit == 1'b1) begin 
 						space_pressed_in = 1'b0;
 					end 
 					// edge hasn't been hit
@@ -107,9 +107,9 @@ module  user_laser ( input        Clk,           // 50 MHz clock
 				end				
 				else begin
 					laser_X_Pos_in = user_x_pos + 10'd5;
-					laser_Y_Pos_in = user_y_pos - laser_Y_Size;
+					laser_Y_Pos_in = user_y_pos + 10'd2;
 					laser_Y_Motion_in = 10'd0; 
-					old_X_Pos = user_x_pos + 10'd5;
+					old_X_Pos = user_x_pos + 10'd8;
 					space_pressed_in = 1'b0;
 				end
 				

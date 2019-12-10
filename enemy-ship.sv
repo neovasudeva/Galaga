@@ -18,6 +18,7 @@ module  enemy_ship ( input         Clk,           // 50 MHz clock
 					input [9:0] 	user_laser_x_pos,  	// position of user laser
 					input [9:0]		user_laser_y_pos,
 					output [4:0]	count,						// used for counting score
+					output 			laser_hit,					// tell that laser has hit an enemy
 					input 			done 							// reset score, game is done	
               );		
     
@@ -84,7 +85,7 @@ module  enemy_ship ( input         Clk,           // 50 MHz clock
 		  // gameover detection
 		  // check if ship has reached the bottom row, use for gameover detection 
 		  // reset position of all enemy ships and make motion 0
-		  else if (enemy_ship_Y_Pos >= enemy_ship_Y_Max - user_ship_Size) begin
+		  else if (enemy_ship_Y_Pos >= enemy_ship_Y_Max - user_ship_Size - enemy_ship_Size) begin
 				enemy_ship_X_Motion_in = enemy_ship_X_Step;
 				enemy_ship_Y_Motion_in = 10'd0;
 				enemy_ship_X_Pos_in = enemy_x_pos;
@@ -136,7 +137,7 @@ module  enemy_ship ( input         Clk,           // 50 MHz clock
 	 hit_controller hitter (.Clk (Clk), .Reset (Reset), 
 									.enemy_ship_X_Pos (enemy_ship_X_Pos), .enemy_ship_Y_Pos (enemy_ship_Y_Pos),
 	                        .user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
-	                        .enemy_hit (enemy_hit), .done (done));
+	                        .enemy_hit (enemy_hit), .laser_hit (laser_hit), .done (done));
 	 always_comb begin
 		if (enemy_hit) 
 			count = 5'b00001;

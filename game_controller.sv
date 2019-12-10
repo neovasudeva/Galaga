@@ -79,6 +79,11 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 	 logic [4:0] score1, score2, score3;
 	 assign score = score1 + score2 + score3;
 	 
+	 // laser logic
+	 logic laser_hit_row1, laser_hit_row2, laser_hit_row3;
+	 logic laser_hit;
+	 assign laser_hit = laser_hit_row1 || laser_hit_row2 || laser_hit_row3; 
+	 
 	 // ships to be used
 	 user_ship ship (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), .keycode(keycode), 
 							.is_user_ship (is_user_ship), .user_ship_data (user_ship_data),
@@ -93,7 +98,7 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 					.is_enemy_ship4 (is_enemy_ship14), .enemy_ship_data4 (enemy_ship_data14),
 					.is_enemy_ship5 (is_enemy_ship15), .enemy_ship_data5 (enemy_ship_data15),
 					.is_enemy_ship6 (is_enemy_ship16), .enemy_ship_data6 (enemy_ship_data16),
-					.score_row (score1));
+					.score_row (score1), .laser_hit_row (laser_hit_row1));
 					
 	 // row 2
 	 eship_row row2 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), .y_offset (10'd80), .play (play), .gameover (gameover2), .done (done),
@@ -104,7 +109,7 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 					.is_enemy_ship4 (is_enemy_ship24), .enemy_ship_data4 (enemy_ship_data24),
 					.is_enemy_ship5 (is_enemy_ship25), .enemy_ship_data5 (enemy_ship_data25),
 					.is_enemy_ship6 (is_enemy_ship26), .enemy_ship_data6 (enemy_ship_data26),
-					.score_row (score2));
+					.score_row (score2), .laser_hit_row (laser_hit_row2));
 					
 	 // row 3
 	 eship_row row3 (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), .y_offset (10'd160), .play (play), .gameover (gameover3), .done (done),
@@ -115,7 +120,7 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 					.is_enemy_ship4 (is_enemy_ship34), .enemy_ship_data4 (enemy_ship_data34),
 					.is_enemy_ship5 (is_enemy_ship35), .enemy_ship_data5 (enemy_ship_data35),
 					.is_enemy_ship6 (is_enemy_ship36), .enemy_ship_data6 (enemy_ship_data36),
-					.score_row (score3));
+					.score_row (score3), .laser_hit_row (laser_hit_row3));
 	
 		
 		/*
@@ -130,8 +135,8 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 	 user_laser ulaser (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), .keycode(keycode), 
 							.user_x_pos (user_x_pos), .user_y_pos (user_y_pos),
 							.is_laser (is_laser), .laser_data (laser_data),
-							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos));
-							//.laser_hit (laser_hit));
+							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
+							.laser_hit (laser_hit));
 									
 	 // logo controllers
 	 logic is_galaga;
@@ -184,17 +189,17 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 		
 		// play state
 		else if (play == 1'b1) begin
-			if (is_laser == 1'b1) begin 
-				// laser
-				Red = laser_data[15:8];
-				Green = laser_data[23:16];
-				Blue = laser_data[7:0];
-			end
-			else if (is_user_ship == 1'b1) begin
+			if (is_user_ship == 1'b1) begin
 				// user ship
 				Red = user_ship_data[15:8];
 				Green = user_ship_data[23:16];
 				Blue = user_ship_data[7:0];
+			end
+			else if (is_laser == 1'b1) begin 
+				// laser
+				Red = laser_data[15:8];
+				Green = laser_data[23:16];
+				Blue = laser_data[7:0];
 			end
 			
 			// row 1
