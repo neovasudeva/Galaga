@@ -1,0 +1,43 @@
+module testbench();
+
+timeunit 10ns;
+timeprecision 1ns;
+
+logic Clk;        
+logic Reset;
+logic [7:0]  keycode;
+logic died;
+logic killed_all1;
+logic killed_all2;
+logic start;
+logic play;
+logic boss_fight;
+logic boss_logo;
+logic gameover;
+logic win;
+		
+signal_controller test (.*);
+
+always begin : CLOCK_GENERATION
+
+#1 CLK=~CLK;
+
+end
+
+initial begin : CLOCK_INITIALIZATION
+	CLK = 0;
+end		
+
+initial begin : TEST_VECTORS
+	//AES_KEY = 128'h2b7e151628aed2a6abf7158809cf4f3c;
+	AES_KEY = 128'h000102030405060708090a0b0c0d0e0f;
+	AES_START = 0;
+	//AES_MSG_ENC = 128'h3925841d02dc09fbdc118597196a0b32;
+	AES_MSG_ENC = 128'hdaec3055df058e1c39e814ea76f6747e;
+	RESET = 1;
+	
+#2 RESET = 0;
+	AES_START = 1;
+	
+end
+endmodule 

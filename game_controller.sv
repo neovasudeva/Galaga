@@ -15,14 +15,15 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 );
 
 	 // SIGNAL CONTROLLER LOGIC
-	 logic start, play, gameover, win;
-	 logic done, killed_all, died;
-	 assign killed_all = (score == 5'h12);
-	 assign died = (gameover1 || gameover2 || gameover3);
-	 assign done = (gameover1 || gameover2 || gameover3) || (score == 5'h12);
+	 logic start, play, boss_logo, boss_fight, gameover, win;
+	 logic done, killed_all1, killed_all2, died;
+	 assign killed_all1 = (score == 5'h12);
+	 assign killed_all2 = (score == 5'h13);
+	 assign died = (gameover1 || gameover2 || gameover3 || gameover_boss);
+	 assign done = (gameover1 || gameover2 || gameover3 || gameover_boss) || (score == 5'h13);
 	 signal_controller(.Clk (Clk), .Reset (Reset), .keycode (keycode), 
-								.died (died), .killed_all (killed_all), 
-								.start (start), .play (play), .gameover (gameover), .win (win) );
+								.died (died), .killed_all1 (killed_all1), .killed_all2 (killed_all2),
+								.start (start), .play (play), .gameover (gameover), .win (win), .boss_logo (boss_logo), .boss_fight (boss_fight) );
 	 
 	 // user ship and laser
 	 logic is_user_ship;
@@ -77,15 +78,19 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 	 logic is_enemy_ship36;
 	 logic [23:0] enemy_ship_data36;
 	 
+	 // boss data
+	 logic is_boss_ship;
+	 logic [23:0] boss_ship_data;
+	 
 	 // score and gameover logic
-	 logic gameover1, gameover2, gameover3;
-	 logic [4:0] score1, score2, score3;
-	 assign score = score1 + score2 + score3;
+	 logic gameover1, gameover2, gameover3, gameover_boss;
+	 logic [4:0] score1, score2, score3, score_boss;
+	 assign score = score1 + score2 + score3 + score_boss;
 	 
 	 // laser logic
-	 logic laser_hit_row1, laser_hit_row2, laser_hit_row3;
+	 logic laser_hit_row1, laser_hit_row2, laser_hit_row3, laser_hit_boss;
 	 logic laser_hit;
-	 assign laser_hit = laser_hit_row1 || laser_hit_row2 || laser_hit_row3; 
+	 assign laser_hit = laser_hit_row1 || laser_hit_row2 || laser_hit_row3 || laser_hit_boss; 
 	 
 	 // ships to be used
 	 user_ship ship (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), .keycode(keycode), 
@@ -133,23 +138,32 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
 							.count (), .laser_hit (laser_hit), .done ());
 		*/
-					
+			
+	 // boss
+	 boss bboi (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), .keycode (keycode), 
+							.is_boss (is_boss_ship), .boss_data (boss_ship_data), 
+							.boss_fight (boss_fight), .gameover (gameover_boss),
+							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
+							.count (score_boss), .laser_hit (laser_hit_boss), .done (done));
+							
 	 // laser
 	 user_laser ulaser (.Clk (Clk), .Reset (Reset), .frame_clk (frame_clk), .DrawX(DrawX), .DrawY(DrawY), .keycode(keycode), 
 							.user_x_pos (user_x_pos), .user_y_pos (user_y_pos),
 							.is_laser (is_laser), .laser_data (laser_data),
 							.user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
-							.play (play), .laser_hit (laser_hit));
+							.play (play), .boss_fight (boss_fight), .laser_hit (laser_hit));
 									
 	 // logo controllers
 	 logic is_galaga;
 	 logic is_pressed_start;
 	 logic is_gameover;
 	 logic is_you_win;
+	 logic is_boss;
 	 galaga_logo gl (.DrawX (DrawX), .DrawY (DrawY), .is_galaga (is_galaga));	
 	 press_start_logo psl (.DrawX (DrawX), .DrawY (DrawY), .is_press_start (is_press_start));
 	 gameover_logo go (.DrawX (DrawX), .DrawY (DrawY), .is_gameover (is_gameover));
 	 you_win_logo yw (.DrawX (DrawX), .DrawY (DrawY), .is_you_win (is_you_win));
+	 boss_logo bl (.DrawX (DrawX), .DrawY (DrawY), .is_boss (is_boss));
 							
 							
 	 // COLOR ASSIGNMENT -> assigns color to color_data to display on monitor
@@ -318,6 +332,51 @@ module game_controller ( input         Clk,         	// 50 MHz clock signal
 			else 
 			begin
 				Red = 8'h20; 
+				Green = 8'h00;
+				Blue = 8'h00;
+			end
+		end
+		
+		// boss_logo
+		else if (boss_logo == 1'b1) begin
+			if (is_boss == 1'b1) begin
+				Red = 8'hFF;
+				Green = 8'hFF;
+				Blue = 8'hFF;
+			end
+			else if (is_press_start == 1'b1) begin
+				Red = 8'hFF;
+				Green = 8'hFF;
+				Blue = 8'hFF;
+			end
+			else begin
+				Red = 8'h20;
+				Green = 8'h00;
+				Blue = 8'h00;
+			end
+		end
+		
+		// boss fight
+		else if (boss_fight == 1'b1) begin
+			if (is_boss_ship == 1'b1) begin
+				Red = boss_ship_data[15:8];
+				Green = boss_ship_data[23:16];
+				Blue = boss_ship_data[7:0];
+			end
+			else if (is_user_ship == 1'b1) begin
+				// user ship
+				Red = user_ship_data[15:8];
+				Green = user_ship_data[23:16];
+				Blue = user_ship_data[7:0];
+			end
+			else if (is_laser == 1'b1) begin 
+				// laser
+				Red = laser_data[15:8];
+				Green = laser_data[23:16];
+				Blue = laser_data[7:0];
+			end
+			else begin
+				Red = 8'h20;
 				Green = 8'h00;
 				Blue = 8'h00;
 			end

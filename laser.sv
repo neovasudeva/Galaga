@@ -15,7 +15,8 @@ module  user_laser ( input        Clk,           // 50 MHz clock
 					output [23:0] laser_data,		    // sends color of user ship
 					output [9:0]  user_laser_x_pos, 	 // location of laser
 					output [9:0]  user_laser_y_pos,
-					input			  play,					 // in play state?
+					input			  play,			 		// in play or boss state?
+					input 		  boss_fight,
 					input 		  laser_hit				 // laser has hit enemy
               );
     
@@ -81,8 +82,8 @@ module  user_laser ( input        Clk,           // 50 MHz clock
 		  old_X_Pos = laser_X_Pos;
 		  space_pressed_in = space_pressed;
         
-		  // don't shoot laser if not in play state
-		  if (play == 1'b0) begin
+		  // don't shoot laser if not in play state and boss_fight state
+		  if (play == 1'b0 && boss_fight == 1'b0) begin
 				laser_X_Pos_in = user_x_pos + 10'd5;
 				laser_Y_Pos_in = user_y_pos + 10'd2;
 				laser_Y_Motion_in = 10'd0; 

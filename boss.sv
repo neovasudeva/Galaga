@@ -1,0 +1,168 @@
+module  boss ( input    Clk,           				// 50 MHz clock
+										Reset,            	// Active-high reset signal
+										frame_clk,        	// The clock indicating a new frame (~60Hz)
+               input [9:0]   	DrawX, DrawY,     	// Current pixel coordinates
+					input [7:0] 	keycode, 
+					output 		  	is_boss,		 			// whether current drawing pixel is the boss
+					output [23:0] 	boss_data,	 			// sends color of user ship
+					input 		 	boss_fight,				// boss fight state?
+					output 			gameover,			   // indicate that ship has reached lowest row
+					input [9:0] 	user_laser_x_pos,  	// position of user laser
+					input [9:0]		user_laser_y_pos,
+					output [4:0]	count,					// used for counting score
+					output 			laser_hit,				// tell that laser has hit an enemy
+					input 			done 						// reset score, game is done	
+              );		
+    
+    parameter [9:0] boss_X_Center = 10'd320;  // Center position on the X axis
+    parameter [9:0] boss_Y_Center = 10'd240;  // Center position on the Y axis
+    parameter [9:0] boss_X_Min = 10'd0;       // Leftmost point on the X axis
+    parameter [9:0] boss_X_Max = 10'd639;     // Rightmost point on the X axis
+    parameter [9:0] boss_Y_Min = 10'd0;       // Topmost point on the Y axis
+    parameter [9:0] boss_Y_Max = 10'd479;     // Bottommost point on the Y axis
+    parameter [9:0] boss_X_Step = 10'd5;      // Step size on the X axis
+    parameter [9:0] boss_Y_Step = 10'd1;      // Step size on the Y axis
+    parameter [9:0] boss_Size = 10'd30;       // boss's size (30x30)
+	 parameter [9:0] user_ship_Size = 10'd40;			 // user_ship's size (40x40)
+    
+    logic [9:0] boss_X_Motion, boss_Y_Motion, boss_X_Pos, boss_Y_Pos;
+    logic [9:0] boss_X_Pos_in, boss_X_Motion_in, boss_Y_Pos_in, boss_Y_Motion_in;
+    
+    //////// Do not modify the always_ff blocks. ////////
+    // Detect rising edge of frame_clk
+    logic frame_clk_delayed, frame_clk_rising_edge;
+    always_ff @ (posedge Clk) begin
+        frame_clk_delayed <= frame_clk;
+        frame_clk_rising_edge <= (frame_clk == 1'b1) && (frame_clk_delayed == 1'b0);
+    end
+    // Update registers
+    always_ff @ (posedge Clk or posedge Reset)
+    begin
+        if (Reset)
+        begin
+            boss_X_Pos <= boss_X_Center;
+            boss_Y_Pos <= boss_Y_Min;	
+            boss_X_Motion <= boss_X_Step;
+            boss_Y_Motion <= 10'd0;
+        end
+        else
+        begin
+            boss_X_Pos <= boss_X_Pos_in;
+            boss_Y_Pos <= boss_Y_Pos_in;
+            boss_X_Motion <= boss_X_Motion_in;
+            boss_Y_Motion <= boss_Y_Motion_in;
+        end
+    end
+    //////// Do not modify the always_ff blocks. ////////
+    
+    // You need to modify always_comb block.
+    always_comb
+    begin
+        // By default, keep motion and position unchanged
+        boss_X_Pos_in = boss_X_Pos;
+        boss_Y_Pos_in = boss_Y_Pos;
+        boss_X_Motion_in = boss_X_Motion;
+        boss_Y_Motion_in = boss_Y_Motion;
+		  gameover = 1'b0;
+		  
+		  // make sure ships don't move if not in play state
+		  if (boss_fight == 1'b0) begin
+				boss_X_Motion_in = boss_X_Step;
+				boss_Y_Motion_in = 10'd0;
+				boss_X_Pos_in = boss_X_Center;
+				boss_Y_Pos_in = boss_Y_Min;
+				gameover = 1'b0;
+		  end
+		  
+		  // gameover detection
+		  // check if ship has reached the bottom row, use for gameover detection 
+		  // reset position of all enemy ships and make motion 0
+		  else if (boss_Y_Pos >= boss_Y_Max - user_ship_Size - boss_Size) begin
+				boss_X_Motion_in = boss_X_Step;
+				boss_Y_Motion_in = 10'd0;
+				boss_X_Pos_in = boss_X_Center;
+				boss_Y_Pos_in = boss_Y_Min;
+				gameover = 1'b1;
+		  end  
+		  
+		  // specific enemy has been hit, don't display and move it out of frame
+		  else if (enemy_hit == 1'b1) begin
+				boss_X_Pos_in = 10'd639;
+				boss_Y_Pos_in = 10'd0;
+				boss_X_Motion_in = 10'd0;
+				boss_Y_Motion_in = 10'd0;
+		  end
+					
+        // Update position and motion only at rising edge of frame clock
+        else if (frame_clk_rising_edge)
+        begin
+            // Be careful when using comparators with "logic" datatype because compiler treats 
+            //   both sides of the operator as UNSIGNED numbers.
+            // e.g. boss_Y_Pos - Ball_Size <= boss_Y_Min 
+            // If boss_Y_Pos is 0, then boss_Y_Pos - Ball_Size will not be -4, but rather a large positive number.
+					
+				// handle edges -> left and right edges
+				if (boss_X_Pos + boss_Size >= boss_X_Max) begin // Ball is at right edge, BOUNCE!
+					 boss_X_Motion_in = (~(boss_X_Step) + 1'b1);
+					 boss_Y_Motion_in = 10'd10;
+				end
+				else if (boss_X_Pos <= boss_X_Min + 10'd1)	begin // Ball is at left edge, BOUNCE!
+					 boss_X_Motion_in = boss_X_Step;
+					 boss_Y_Motion_in = 10'd10;
+				end
+				else if (keycode == 8'h2C) begin
+					 boss_X_Motion_in = (~(boss_X_Motion) + 1'b1);
+					 boss_Y_Motion_in = 10'd2;
+				end
+				else begin
+					boss_X_Motion_in = boss_X_Motion;
+					boss_Y_Motion_in = 10'd0;
+				end
+        
+            // Update the ball's position with its motion
+            boss_X_Pos_in = boss_X_Pos + boss_X_Motion;
+            boss_Y_Pos_in = boss_Y_Pos + boss_Y_Motion;
+        end
+    end
+	 
+	 /* hit controller */
+	 //
+	 // detects when enemy is hit by laser and controls when laser has hit an enemy
+	 
+	 logic enemy_hit;
+	 logic laser_hit_temp;
+	 assign laser_hit = laser_hit_temp && boss_fight;
+	 hit_controller_boss hitter (.Clk (Clk), .Reset (Reset), 
+									.enemy_ship_X_Pos (boss_X_Pos), .enemy_ship_Y_Pos (boss_Y_Pos),
+	                        .user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
+	                        .boss_fight (boss_fight), .enemy_hit (enemy_hit), .laser_hit (laser_hit_temp), .done (done));
+	 always_comb begin
+		if (enemy_hit) 
+			count = 5'b00001;
+		else
+			count = 5'b00000;
+	 end
+	
+	 // drawing logic 
+	 logic [10:0] boss_addr;
+    always_comb begin
+        if ( DrawX >= boss_X_Pos && DrawX < boss_X_Pos + boss_Size &&
+				DrawY >= boss_Y_Pos && DrawY < boss_Y_Pos + boss_Size &&
+				enemy_hit == 1'b0) begin
+				boss_addr = (DrawY - boss_Y_Pos) * boss_Size + (DrawX - boss_X_Pos);
+				// don't color in background of ship
+				if (boss_data == 24'h002000) 
+					is_boss = 1'b0;
+				else
+					is_boss = 1'b1;
+		  end
+        else begin
+				boss_addr = 10'h00;	// match background
+            is_boss = 1'b0;
+		  end
+    end
+	 
+	 // get color data of boss via on chip memory
+	 enemyRAM er(.read_address (boss_addr), .Clk (Clk), .data_out(boss_data) );
+    
+endmodule

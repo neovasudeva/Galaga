@@ -1,38 +1,66 @@
-Quartus Prime Archive log --	I:/lab8_v2/__lab7_usb.auto.qarlog
+Quartus Prime Archive log --	I:/FinalProject/__lab7_usb.auto.qarlog
 
-Archive:	I:/lab8_v2/__lab7_usb.auto.qar
-Date:		Tue Oct 22 14:55:28 2019
+Archive:	I:/FinalProject/__lab7_usb.auto.qar
+Date:		Tue Dec 10 16:24:42 2019
 Quartus Prime		18.0.0 Build 614 04/24/2018 SJ Lite Edition
 
 	=========== Files Selected: ===========
 Color_Mapper.sv
 HexDriver.sv
-I:/lab8_v2/db/a_dpfifo_l011.tdf
-I:/lab8_v2/db/a_fefifo_7cf.tdf
-I:/lab8_v2/db/altsyncram_6mc1.tdf
-I:/lab8_v2/db/altsyncram_ac71.tdf
-I:/lab8_v2/db/altsyncram_e8h1.tdf
-I:/lab8_v2/db/altsyncram_nio1.tdf
-I:/lab8_v2/db/cntr_1ob.tdf
-I:/lab8_v2/db/cntr_do7.tdf
-I:/lab8_v2/db/lab8.qpf
-I:/lab8_v2/db/mult_p5t.tdf
-I:/lab8_v2/db/scfifo_jr21.tdf
-I:/lab8_v2/db/vga_clk_altpll.v
+I:/FinalProject/db/a_dpfifo_l011.tdf
+I:/FinalProject/db/a_fefifo_7cf.tdf
+I:/FinalProject/db/add_sub_7pc.tdf
+I:/FinalProject/db/add_sub_8pc.tdf
+I:/FinalProject/db/add_sub_jgh.tdf
+I:/FinalProject/db/add_sub_ngh.tdf
+I:/FinalProject/db/alt_u_div_44f.tdf
+I:/FinalProject/db/altsyncram_6mc1.tdf
+I:/FinalProject/db/altsyncram_ac71.tdf
+I:/FinalProject/db/altsyncram_e8h1.tdf
+I:/FinalProject/db/altsyncram_nio1.tdf
+I:/FinalProject/db/cntr_1ob.tdf
+I:/FinalProject/db/cntr_do7.tdf
+I:/FinalProject/db/lab8.qpf
+I:/FinalProject/db/lab8.ram0_enemyRAM_3805771f.hdl.mif
+I:/FinalProject/db/lab8.ram0_laserRAM_85cc6c8c.hdl.mif
+I:/FinalProject/db/lab8.ram0_shipRAM_7b57d025.hdl.mif
+I:/FinalProject/db/lpm_divide_ghm.tdf
+I:/FinalProject/db/lpm_divide_j9m.tdf
+I:/FinalProject/db/mult_p5t.tdf
+I:/FinalProject/db/scfifo_jr21.tdf
+I:/FinalProject/db/sign_div_unsign_8kh.tdf
+I:/FinalProject/db/vga_clk_altpll.v
 PLLJ_PLLSPE_INFO.txt
 VGA_controller.sv
+__lab7_usb.auto.qarlog
+bad-guy.txt
 ball.sv
+boss.sv
 c:/intelfpga_lite/18.0/quartus/bin64/assignment_defaults.qdf
+enemy-ship.sv
+eship_row.sv
+galaga_logo.sv
+game_controller.sv
+hit_controller.sv
+hit_controller_boss.sv
 hpi_io_intf.sv
+image.txt
 lab7_usb.qsf
 lab8.sdc
 lab8.sv
 lab8_assignment_defaults.qdf
+lab8_tmp_archive.qarlog
+laser.sv
+laser.txt
 nios_system.qsys
+ram.sv
+signal_controller.sv
+sprite_rom.sv
+user_ship.sv
 vga_clk.ppf
 vga_clk.qip
 vga_clk.v
-	======= Total: 27 files to archive =======
+	======= Total: 55 files to archive =======
 
 	================ Status: ===============
 All files archived successfully.

@@ -1,0 +1,60 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dD:/FinalProject/simulation/modelsim
+vsignal_controller
+Z1 DXx6 sv_std 3 std 0 22 AD7iAPLo6nTIKk<N0eo=D3
+Z2 !s110 1576042837
+!i10b 1
+!s100 0@bK>HEi;W@MC81LTE9:<1
+IP=j0`n2FCARR=ioc336K73
+Z3 VDg1SIo80bB@j0V0VzS_@n1
+!s105 signal_controller_sv_unit
+S1
+R0
+w1576042676
+8D:/FinalProject/signal_controller.sv
+FD:/FinalProject/signal_controller.sv
+L0 6
+Z4 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z5 !s108 1576042837.000000
+!s107 D:/FinalProject/signal_controller.sv|
+!s90 -reportprogress|300|-sv|-work|work|+incdir+D:/FinalProject|D:/FinalProject/signal_controller.sv|
+!i113 1
+Z6 o-sv -work work
+Z7 !s92 -sv -work work +incdir+D:/FinalProject
+Z8 tCvgOpt 0
+vtestbench
+R1
+R2
+!i10b 1
+!s100 HMP51A]HHi62D?Ral^Ilc0
+IYAglgPP5ESgZVO;YfeTg_3
+R3
+!s105 testbench_sv_unit
+S1
+R0
+w1576042264
+8D:/FinalProject/testbench.sv
+FD:/FinalProject/testbench.sv
+L0 1
+R4
+r1
+!s85 0
+31
+R5
+!s107 D:/FinalProject/testbench.sv|
+!s90 -reportprogress|300|-sv|-work|work|+incdir+D:/FinalProject|D:/FinalProject/testbench.sv|
+!i113 1
+R6
+R7
+R8

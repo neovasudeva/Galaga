@@ -133,10 +133,12 @@ module  enemy_ship ( input         Clk,           // 50 MHz clock
 	 // detects when enemy is hit by laser and controls when laser has hit an enemy
 	 
 	 logic enemy_hit;
+	 logic laser_hit_temp;
+	 assign laser_hit = laser_hit_temp && play;
 	 hit_controller hitter (.Clk (Clk), .Reset (Reset), 
 									.enemy_ship_X_Pos (enemy_ship_X_Pos), .enemy_ship_Y_Pos (enemy_ship_Y_Pos),
 	                        .user_laser_x_pos (user_laser_x_pos), .user_laser_y_pos (user_laser_y_pos),
-	                        .enemy_hit (enemy_hit), .laser_hit (laser_hit), .done (done));
+	                        .enemy_hit (enemy_hit), .laser_hit (laser_hit_temp), .done (done));
 	 always_comb begin
 		if (enemy_hit) 
 			count = 5'b00001;
